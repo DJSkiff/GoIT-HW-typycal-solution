@@ -84,7 +84,8 @@ def main():
     rec = Record('Volodymyr')
 
     book.add_record(Record("Yehor", ("063 666 99 66", "048 722 22 22")))
-    book.add_record(Record("Pavel"))  # "063 666 66 66", "048 222 22 22"
+    # "063 666 66 66", "048 222 22 22"
+    book.add_record(Record("Pavel", ('048 222 22 22',)))
     book.add_record(rec)
     print(book)
 
