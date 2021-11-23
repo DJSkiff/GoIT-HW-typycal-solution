@@ -114,7 +114,7 @@ def fill_data():
             # выбираем троих из наших 30.
             r_students = [randint(1, 30) for _ in range(3)]
             # проходимся по списку "везучих" студентов, добавляем их в результирующий список
-            # и генерируем отценку
+            # и генерируем оценку
             for student in r_students:
                 grades.append((student, r_disc, d.date(), randint(1, 12)))
 
