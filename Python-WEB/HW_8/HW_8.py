@@ -8,20 +8,24 @@
 
     С библиотекой os вы уже знакомы.
 Будем использовать для проверки существования файла БД и работы с файлом
-скрипта SQL
+скрипта SQL'''
 
-    pandas - популярная библиотека в среде DataScience, но нас интересует
-всего одна функция для генерации списка дат.
-Больше информации - https://pandas.pydata.org/docs/reference/
-Установка - pip install pandas'''
-
+from datetime import date, datetime, timedelta
 from random import randint
 import sqlite3
-import pandas as pd
 import os
 import faker
 
-
+'''Создаем свою ф-цию для получения списка дат, в которые происходит учебный процесс.
+Для упрощения выбрасываем только дни, которые попадают на выходные.'''
+def date_range(start: date, end: date) -> list:
+    result = []
+    curdate = start
+    while curdate <= end:
+        if curdate.isoweekday() < 6:
+            result.append(curdate)
+        curdate += timedelta(1)
+    return result
 
 '''Функция создания БД, в качестве параметра -
 передаем путь к фаулу с SQL скриптом'''
@@ -105,7 +109,10 @@ def fill_data():
         # для заполнения таблицы grades нам нужны даты, в которые происходит обучение
         # используем ф-цию date_range библиотеки pandas для их генерации
         # больше - https://pandas.pydata.org/docs/reference/api/pandas.date_range.html
-        d_range = pd.date_range(start='2020-09-01', end='2021-05-25', freq='B')
+        
+        start_date = datetime.strptime("2020-09-01", "%Y-%m-%d") # дата начала учебного процесса
+        end_date = datetime.strptime("2021-05-25", "%Y-%m-%d") # дата окончания учебного процесса
+        d_range = date_range(start=start_date, end=end_date)
 
         # создаём пустой список, в котором будем генерировать записи с оценками для каждого студента
         grades = []
