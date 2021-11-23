@@ -1,25 +1,27 @@
-'''Типовое решение заполнения БД данными. Перед выполнением создаём виртоальное окружение'''
+'''Типовое решение заполнения БД данными. Перед выполнением создаём
+виртyальное окружение'''
 from random import randint
 import sqlite3
 import pandas as pd
 import os
 import faker
-''' Будем использовать библиотеку Faker для генерации случайных данных, в нашем 
-случае имён студентов и преподавателей. 
+''' Будем использовать библиотеку Faker для генерации
+случайных данных, в нашем случае имён студентов и преподавателей.
 Больше информация - https://faker.readthedocs.io/en/master/index.html
 Установка - pip install faker
 
-    С библиотекой os вы уже знакомы. 
+    С библиотекой os вы уже знакомы.
 Будем использовать для проверки существования файла БД и работы с файлом
 скрипта SQL
 
-    Популярная библиотека в среде DataScience, но нас интересует всего одна функция 
-для генерации списка дат.
+    Популярная библиотека в среде DataScience, но нас интересует
+всего одна функция для генерации списка дат.
 Больше информации - https://pandas.pydata.org/docs/reference/
 Установка - pip install pandas'''
 
 
-'''Функция создания БД, в качестве параметра - передаем путь к фаулу с SQL скриптом'''
+'''Функция создания БД, в качестве параметра -
+передаем путь к фаулу с SQL скриптом'''
 
 
 def create_db(path):
@@ -63,7 +65,8 @@ def fill_data():
         teachers = []  # создаем пустой список преподавателей
 
         # заполняем его случайными именами из объекта fake
-        for _ in range(3):  # range принимает в качестве параметра кол-во требуемых объектов
+        # range принимает в качестве параметра кол-во требуемых объектов
+        for _ in range(3):  
             teachers.append(fake.name())
 
         # создаём переменную с текстом запроса для заполнения таблицы teachers
@@ -180,7 +183,27 @@ def query_4():
         cur.execute(sql)
         print(cur.fetchall())
 
-
+def query_5(id_teacher:int):
+    with sqlite3.connect('education.db') as conn:
+        cur = conn.cursor()
+        sql = '''SELECT t.teacher, d.discipline
+                 FROM teachers t
+                 LEFT JOIN disciplines d ON d.teacher = t.id
+                 WHERE t.id = ?'''
+        cur.execute(sql, (id_teacher,))
+        print(cur.fetchall())
+        
+        
+def query_6(id_group:int):
+    with sqlite3.connect('education.db') as conn:
+        cur = conn.cursor()
+        sql = '''SELECT g.[group], s.student
+                 FROM students s
+                 LEFT JOIN [groups] g ON g.id = s.[group]
+                 WHERE g.id = ?'''
+        cur.execute(sql, (id_group,))
+        print(cur.fetchall())
+        
 if __name__ == '__main__':
     create_db('education.sql')
     fill_data()
@@ -188,3 +211,5 @@ if __name__ == '__main__':
     query_2(2)
     query_3(1)
     query_4()
+    query_5(3)
+    query_6(2)
