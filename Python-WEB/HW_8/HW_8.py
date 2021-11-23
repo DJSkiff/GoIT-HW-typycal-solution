@@ -1,11 +1,7 @@
 '''Типовое решение заполнения БД данными. Перед выполнением создаём
-виртyальное окружение'''
-from random import randint
-import sqlite3
-import pandas as pd
-import os
-import faker
-''' Будем использовать библиотеку Faker для генерации
+виртyальное окружение
+
+    Будем использовать библиотеку Faker для генерации
 случайных данных, в нашем случае имён студентов и преподавателей.
 Больше информация - https://faker.readthedocs.io/en/master/index.html
 Установка - pip install faker
@@ -18,6 +14,13 @@ import faker
 всего одна функция для генерации списка дат.
 Больше информации - https://pandas.pydata.org/docs/reference/
 Установка - pip install pandas'''
+
+from random import randint
+import sqlite3
+import pandas as pd
+import os
+import faker
+
 
 
 '''Функция создания БД, в качестве параметра -
@@ -114,7 +117,7 @@ def fill_data():
             # выбираем троих из наших 30.
             r_students = [randint(1, 30) for _ in range(3)]
             # проходимся по списку "везучих" студентов, добавляем их в результирующий список
-            # и генерируем отценку
+            # и генерируем оценку
             for student in r_students:
                 grades.append((student, r_disc, d.date(), randint(1, 12)))
 
