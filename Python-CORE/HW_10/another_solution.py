@@ -22,9 +22,6 @@ class Phone(Field):
     def __str__(self):
         return f"Phone:{self.value}"
 
-    def __repr__(self) -> str:
-        return self.value
-
 
 class Record:
     """Records(contacts) in users contact book.
