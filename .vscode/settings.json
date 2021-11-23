@@ -1,3 +1,11 @@
 {
-  "python.formatting.provider": "black"
+  "python.formatting.provider": "autopep8",
+  "sqltools.connections": [
+    {
+      "previewLimit": 50,
+      "driver": "SQLite",
+      "database": "${workspaceFolder:GoIT-HW-typycal-solution}/Python-WEB/HW_8/education.db",
+      "name": "test_db"
+    }
+  ]
 }
