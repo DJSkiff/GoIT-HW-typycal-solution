@@ -171,9 +171,20 @@ def query_3(id_discipline: int):
         print(cur.fetchall())
 
 
+def query_4():
+    with sqlite3.connect('education.db') as conn:
+        cur = conn.cursor()
+        sql = '''SELECT round(avg(grade),2) AS avg_grade
+                 FROM grades
+              '''
+        cur.execute(sql)
+        print(cur.fetchall())
+
+
 if __name__ == '__main__':
     create_db('education.sql')
     fill_data()
     query_1()
     query_2(2)
     query_3(1)
+    query_4()
