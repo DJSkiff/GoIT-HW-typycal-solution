@@ -9,6 +9,8 @@ from sqlalchemy.sql.sqltypes import DateTime
 
 Base = declarative_base()
 
+# таблица для свази many3many
+
 note_m2m_tag = Table(
     "note_m2m_tag",
     Base.metadata,
