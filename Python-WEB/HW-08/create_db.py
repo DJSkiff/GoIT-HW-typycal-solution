@@ -18,6 +18,8 @@ import faker
 
 '''Создаем свою ф-цию для получения списка дат, в которые происходит учебный процесс.
 Для упрощения выбрасываем только дни, которые попадают на выходные.'''
+
+
 def date_range(start: date, end: date) -> list:
     result = []
     curdate = start
@@ -26,6 +28,7 @@ def date_range(start: date, end: date) -> list:
             result.append(curdate)
         curdate += timedelta(1)
     return result
+
 
 '''Функция создания БД, в качестве параметра -
 передаем путь к фаулу с SQL скриптом'''
@@ -73,7 +76,7 @@ def fill_data():
 
         # заполняем его случайными именами из объекта fake
         # range принимает в качестве параметра кол-во требуемых объектов
-        for _ in range(3):  
+        for _ in range(3):
             teachers.append(fake.name())
 
         # создаём переменную с текстом запроса для заполнения таблицы teachers
@@ -109,9 +112,11 @@ def fill_data():
         # для заполнения таблицы grades нам нужны даты, в которые происходит обучение
         # используем ф-цию date_range библиотеки pandas для их генерации
         # больше - https://pandas.pydata.org/docs/reference/api/pandas.date_range.html
-        
-        start_date = datetime.strptime("2020-09-01", "%Y-%m-%d") # дата начала учебного процесса
-        end_date = datetime.strptime("2021-05-25", "%Y-%m-%d") # дата окончания учебного процесса
+
+        # дата начала учебного процесса
+        start_date = datetime.strptime("2020-09-01", "%Y-%m-%d")
+        # дата окончания учебного процесса
+        end_date = datetime.strptime("2021-05-25", "%Y-%m-%d")
         d_range = date_range(start=start_date, end=end_date)
 
         # создаём пустой список, в котором будем генерировать записи с оценками для каждого студента
@@ -139,7 +144,8 @@ def fill_data():
 
     finally:
         conn.close()
-                
+
+
 if __name__ == '__main__':
     create_db('education.sql')
     fill_data()
