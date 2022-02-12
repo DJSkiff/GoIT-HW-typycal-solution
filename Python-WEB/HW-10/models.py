@@ -1,7 +1,6 @@
 from datetime import datetime
 
 from mongoengine import EmbeddedDocument, Document
-from mongoengine.connection import _create_connection
 from mongoengine.fields import BooleanField, DateTimeField, EmbeddedDocumentField, ListField, StringField
 
 
