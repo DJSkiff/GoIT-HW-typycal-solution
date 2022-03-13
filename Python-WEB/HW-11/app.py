@@ -1,151 +1,79 @@
-from flask import Flask, appcontext_tearing_down, request, redirect, g
+from flask import Flask, render_template, request, redirect
 
 
-from sqlalchemy.orm import sessionmaker
-from sqlalchemy.engine import create_engine
-
-from db_models import Note, Tag, get_session
+from db import db_session
+from models import Note, Tag
 
 
 app = Flask(__name__)
 app.debug = True
-app.env = 'development'
+app.env = "development"
 
-def get_session():
-    engine = create_engine("sqlite:///mynotes.db")
-    Session = sessionmaker(bind=engine)
-    return Session()
 
-def generate_tag_select():
-    ses = get_session()
-    result = ''
-    tags = ses.query(Tag).all()
-    for tag in tags:
-        result += f'<option value="{tag.name}">{tag.name}</option>'
-    print(result)
-    return result
-
-@app.route('/')
+@app.route("/")
 def index():
-    ses = get_session()
-    notes = ses.query(Note).all()
-
-    result_html = '<form>'
-    result_html += '<button><a href="/add_new/">Add "NOTE"</a></button>'
-    result_html += '<button><a href="/add_tag/">Add "TAG"</a></button>'
-    result_html += '<ul>'
-    for rec in notes:
-        if not rec.done:
-            result_html += f'''<li>
-            <a href="/detail/{rec.id}">
-            {rec.name}</a>
-            <a href="/done/{rec.id}">
-            Make 'Done'</a>
-            <a href="/delete/{rec.id}">
-            Delete Note</a>
-            </li>'''
-        else:
-            result_html += f'''<li><strike><a href="/detail/{rec.id}">{rec.name}</a></strike> </li>'''
-    result_html += '</ul>'
-    result_html += '</form>'
-    return result_html
+    # ses = get_session()
+    notes = db_session.query(Note).all()
+    return render_template("index.html", notes=notes)
 
 
-@app.route('/add_new/', methods=['GET', 'POST'])
-def add_new():
-    if request.method == 'POST':
-        ses = get_session()
-        name = request.form.get('name')
-        description = request.form.get('description')
-        tags = request.form.getlist('tags')
+@app.route("/detail/<id>")
+def detail(id):
+    note = db_session.query(Note).filter(Note.id == id).first()
+    return render_template("detail.html", note=note)
+
+
+@app.route("/add_note/", methods=["GET", "POST"])
+def add_note():
+    if request.method == "POST":
+        name = request.form.get("name")
+        description = request.form.get("description")
+        tags = request.form.getlist("tags")
         tags_obj = []
         for tag in tags:
-            tags_obj.append(ses.query(Tag).filter(Tag.name == tag).one())
-        note = Note(name = name, description = description, tags = tags_obj)
-        ses.add(note)
-        ses.commit()
-        return redirect('/')
-    
-    return '''<form method="POST">
-                   <a href="/"> To "NOTES" </a>
-                   <div style="padding:10px">
-                        <label>Название заметки: 
-                            <input type="text" name="name" required>
-                        </label>
-                    </div>
-                   <div style="padding:10px">
-                       <label>Описание: 
-                           <input type="text" name="description" required>
-                        </label>
-                    </div>
-                   <div style="padding:10px">
-                       <label>Теги: 
-                           <select type="" name="tags" multiple="multiple" required>'''\
-                           + generate_tag_select()\
-                     + ''' </select>
-                       </label>
-                    </div>
-                   <input type="submit" value="Submit">
-               </form>'''
+            tags_obj.append(db_session.query(Tag).filter(Tag.name == tag).first())
+        note = Note(name=name, description=description, tags=tags_obj)
+        db_session.add(note)
+        db_session.commit()
+        return redirect("/")
+    else:
+        tags = db_session.query(Tag).all()
+
+    return render_template("add_note.html", tags=tags)
 
 
-@app.route('/detail/<id>')
-def detail(id):
-    ses = get_session()
-    rec = ses.query(Note).filter(Note.id == id).first()
-    result_html = '<form>'
-    result_html += '<a href="/"> To "NOTES" </a>'
-    result_html += f'<h1>{rec.name}</h1>'
-    result_html += f'<div>Description: {rec.description}</div>'
-    result_html += f'<div>Created: {rec.created.date()}</div>'
-    result_html += f'<div>Выполнена: {"Да" if rec.done else "Нет"}</div>'
-    result_html += f'<div>Теги: {rec.tags}</div>'
-    result_html += '</form>'
-
-    return result_html
-
-
-@app.route('/delete/<id>')
-def delete(id):
-    ses = get_session()
-    ses.query(Note).filter(Note.id == id).delete()
-    ses.commit()
-
-    return redirect('/')
-
-
-@app.route('/done/<id>')
-def done(id):
-    ses = get_session()
-    note = ses.query(Note).filter(Note.id == id).first()
-    note.done = True
-    ses.commit()
-
-    return redirect('/')
-
-@app.route('/add_tag/', methods=['GET', 'POST'])
+@app.route("/add_tag/", methods=["GET", "POST"])
 def add_tag():
-    if request.method == 'POST':
-        ses = get_session()
-        name = request.form.get('name')
-        tag = Tag(name = name)
-        ses.add(tag)
-        ses.commit()
-        return redirect('/')
-    return '''<form method="POST">
-                   <a href="/"> To "NOTES" </a>
-                   <div style="padding:10px">
-                        <label>Название тега: 
-                            <input type="text" name="name" required>
-                        </label>
-                    </div>
-                    <input type="submit" value="Submit">
-              </form>'''
+    if request.method == "POST":
+        name = request.form.get("name")
+        tag = Tag(name=name)
+        db_session.add(tag)
+        db_session.commit()
+        return redirect("/")
+
+    return render_template("add_tag.html")
 
 
-@appcontext_tearing_down
-def close_connect(error):
-    if hasattr()
+@app.route("/delete/<id>")
+def delete(id):
+    db_session.query(Note).filter(Note.id == id).delete()
+    db_session.commit()
 
-if __name__ == '__main__':
+    return redirect("/")
+
+
+@app.route("/done/<id>")
+def done(id):
+    db_session.query(Note).filter(Note.id == id).first().done = True
+    db_session.commit()
+
+    return redirect("/")
+
+
+@app.teardown_appcontext
+def shutdown_session(exception=None):
+    db_session.remove()
+
+
+if __name__ == "__main__":
     app.run()

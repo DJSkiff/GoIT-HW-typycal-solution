@@ -1,0 +1,17 @@
+<form>
+  <button><a href="/add_note/">Add "NOTE"</a></button>
+  <button><a href="/add_tag/">Add "TAG"</a></button>
+  {% for note in notes%}
+  <ul>
+    <li>
+      {%if not note.done%}
+      <a href="/detail/{{note.id}}">{{note.name}}</a>
+      <a href="/done/{{note.id}}">Make 'Done'</a>
+      <a href="/delete/{{note.id}}">Delete Note</a>
+      {% else %}
+      <strike><a href="/detail/{{note.id}}">{{note.name}}</a></strike>
+      {% endif %}
+    </li>
+  </ul>
+  {% endfor %}
+</form>

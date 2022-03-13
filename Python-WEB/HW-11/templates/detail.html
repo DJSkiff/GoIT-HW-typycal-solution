@@ -1,0 +1,12 @@
+<form>
+    <a href="/"> To "NOTES" </a>
+    <h1>{{note.name}}</h1>
+    <div>Description: {{note.description}}</div>
+    <div>Created: {{note.created.date() }}</div>
+    {% if note.done %}
+    <div>Done: Yes</div>
+    {% else %}
+    <div>Done: No</div>
+    {% endif %}
+    <div>Tags: {{ note.tags|join(', ') }}</div>
+</form>
